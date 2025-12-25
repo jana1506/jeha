@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "704883061744",
+    "project_id": "laza-ecommerce-31d3f",
+    "storage_bucket": "laza-ecommerce-31d3f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:704883061744:android:f9697916862f126a3da335",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAEWlC1IKPfEMDNwNsd-sBL1Mo79RATPY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:704883061744:android:2ed3341e77eb1b423da335",
+        "android_client_info": {
+          "package_name": "jeha1506.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAEWlC1IKPfEMDNwNsd-sBL1Mo79RATPY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
