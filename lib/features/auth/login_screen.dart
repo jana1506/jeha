@@ -15,19 +15,16 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
   bool rememberMe = true;
-  bool _isPasswordValid = false;
+
+  // 1. REMOVED: _isPasswordValid variable
 
   @override
   void initState() {
     super.initState();
-    passwordController.addListener(_validatePassword);
+    // 2. REMOVED: passwordController.addListener(_validatePassword)
   }
 
-  void _validatePassword() {
-    setState(() {
-      _isPasswordValid = passwordController.text.length >= 6;
-    });
-  }
+  // 3. REMOVED: _validatePassword() method
 
   Future<void> _handleLogin() async {
     final email = emailController.text.trim();
@@ -70,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    passwordController.removeListener(_validatePassword);
+    // 4. REMOVED: passwordController.removeListener(_validatePassword)
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -96,7 +93,6 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                // Title
                 const Text(
                   'Welcome',
                   style: TextStyle(
@@ -117,12 +113,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 60),
                 
-                // Username/Email Field
+                // Email Field
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Username',
+                      'Username', // Changed label to Email/Username for clarity
                       style: TextStyle(
                         fontSize: 11,
                         color: Colors.grey,
@@ -174,38 +170,24 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 10),
                     TextField(
                       controller: passwordController,
-                      decoration: InputDecoration(
+                      obscureText: true, // Keep this for security
+                      decoration: const InputDecoration( // 5. REMOVED: suffixIcon logic
                         hintText: 'Enter your password',
-                        hintStyle: const TextStyle(
+                        hintStyle: TextStyle(
                           color: Color(0xFF8F959E),
                           fontSize: 15,
                         ),
-                        suffixIcon: _isPasswordValid
-                            ? const Padding(
-                                padding: EdgeInsets.only(right: 8),
-                                child: Text(
-                                  'Strong',
-                                  style: TextStyle(
-                                    color: Color(0xFF34C759),
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              )
-                            : null,
-                        suffixIconConstraints: const BoxConstraints(minHeight: 0, minWidth: 0),
-                        border: const UnderlineInputBorder(
+                        border: UnderlineInputBorder(
                           borderSide: BorderSide(color: Color(0xFFE7EAEF)),
                         ),
-                        enabledBorder: const UnderlineInputBorder(
+                        enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Color(0xFFE7EAEF)),
                         ),
-                        focusedBorder: const UnderlineInputBorder(
+                        focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Color(0xFF9775FA), width: 2),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                        contentPadding: EdgeInsets.symmetric(vertical: 12),
                       ),
-                      obscureText: true,
                     ),
                   ],
                 ),
@@ -215,9 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {
-                      // TODO: Implement forgot password
-                    },
+                    onPressed: () {},
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.zero,
                       minimumSize: const Size(0, 0),
@@ -257,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 40),
                 
-                // Terms and Conditions
+                // Terms
                 const Center(
                   child: Text(
                     'By connecting your account confirm that you agree\nwith our Term and Condition',
@@ -321,11 +301,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const SignupScreen()),
-                        ),
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: const Size(0, 0),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         child: const Text(
                           'Sign Up',

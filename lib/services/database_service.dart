@@ -298,4 +298,120 @@ class DatabaseService {
       return null;
     }
   }
+
+  // --- ORDERS LOGIC (NEW) ---
+
+  /// Create a new order with cart items, address, and payment info
+  Future<String?> createOrder({
+    required List<Map<String, dynamic>> cartItems,
+    required Map<String, dynamic> addressData,
+    required Map<String, dynamic> paymentData,
+    required double subtotal,
+    required double shipping,
+    required double total,
+  }) async {
+    if (uid == null) return null;
+    
+    try {
+      // Generate unique order ID
+      final orderId = DateTime.now().millisecondsSinceEpoch.toString();
+      
+      await _db
+          .collection('orders')
+          .doc(orderId)
+          .set({
+        'orderId': orderId,
+        'userId': uid,
+        'items': cartItems,
+        'address': {
+          'name': addressData['name'],
+          'country': addressData['country'],
+          'city': addressData['city'],
+          'phone': addressData['phone'],
+          'address': addressData['address'],
+        },
+        'payment': {
+          'type': paymentData['type'],
+          'lastFourDigits': paymentData['lastFourDigits'],
+        },
+        'pricing': {
+          'subtotal': subtotal,
+          'shipping': shipping,
+          'total': total,
+        },
+        'status': 'pending', // pending, processing, shipped, delivered, cancelled
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      
+      return orderId;
+    } catch (e) {
+      print("Error creating order: $e");
+      return null;
+    }
+  }
+
+  /// Get all orders for the current user
+  Future<List<Map<String, dynamic>>> getUserOrders() async {
+    if (uid == null) return [];
+    
+    try {
+      final snapshot = await _db
+          .collection('orders')
+          .where('userId', isEqualTo: uid)
+          .orderBy('createdAt', descending: true)
+          .get();
+      
+      return snapshot.docs.map((doc) => doc.data()).toList();
+    } catch (e) {
+      print("Error getting orders: $e");
+      return [];
+    }
+  }
+
+  /// Stream user's orders for real-time updates
+  Stream<List<Map<String, dynamic>>> getUserOrdersStream() {
+    if (uid == null) return Stream.value([]);
+    
+    return _db
+        .collection('orders')
+        .where('userId', isEqualTo: uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+  }
+
+  /// Get a specific order by ID
+  Future<Map<String, dynamic>?> getOrderById(String orderId) async {
+    if (uid == null) return null;
+    
+    try {
+      final doc = await _db.collection('orders').doc(orderId).get();
+      
+      if (doc.exists && doc.data()?['userId'] == uid) {
+        return doc.data();
+      }
+      return null;
+    } catch (e) {
+      print("Error getting order: $e");
+      return null;
+    }
+  }
+
+  /// Update order status
+  Future<void> updateOrderStatus(String orderId, String status) async {
+    if (uid == null) return;
+    
+    try {
+      await _db
+          .collection('orders')
+          .doc(orderId)
+          .update({
+        'status': status,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      print("Error updating order status: $e");
+    }
+  }
 }

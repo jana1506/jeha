@@ -8,9 +8,16 @@ environment:
   sdk: ^3.10.1
 
 dependencies:
+  
+
   flutter:
+
     sdk: flutter
+
+  intl: ^0.18.0
+ 
   cupertino_icons: ^1.0.8
+  
   
   # --- FIREBASE DEPENDENCIES FOR LAZA PROJECT ---
   firebase_core: ^3.11.0

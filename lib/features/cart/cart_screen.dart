@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/database_service.dart';
 import '../checkout/address_screen.dart';
 import '../checkout/payment_screen.dart';
+import '../checkout/order_confirmation_screen.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -581,15 +582,39 @@ class _CartScreenState extends State<CartScreen> {
             child: ElevatedButton(
               onPressed: canCheckout
                   ? () async {
+                      // Get cart items before clearing
+                      final cartItems = await _dbService.getCartItems().first;
+                      
+                      // Calculate totals
+                      double subtotal = 0;
+                      for (var item in cartItems) {
+                        double price = double.tryParse(item['price'].toString()) ?? 0.0;
+                        subtotal += price * (item['quantity'] ?? 1);
+                      }
+                      double shipping = 10.0;
+                      double orderTotal = subtotal + shipping;
+                      
+                      // Create order in Firebase
+                      final orderId = await _dbService.createOrder(
+                        cartItems: cartItems,
+                        addressData: addressData!,
+                        paymentData: paymentData!,
+                        subtotal: subtotal,
+                        shipping: shipping,
+                        total: orderTotal,
+                      );
+                      
+                      // Clear cart
                       await _dbService.clearCart();
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Order placed successfully!'),
-                            backgroundColor: Color(0xFF34C759),
+                      
+                      if (mounted && orderId != null) {
+                        // Navigate to order confirmation screen
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OrderConfirmationScreen(orderId: orderId),
                           ),
                         );
-                        Navigator.pop(context);
                       }
                     }
                   : null,

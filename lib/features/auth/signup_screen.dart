@@ -13,9 +13,14 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final AuthService _authService = AuthService();
+  
   bool _isLoading = false;
   bool rememberMe = true;
-  bool _isPasswordValid = false;
+  
+  // Professional Password Validation Variables
+  String _passwordStrength = '';
+  Color _strengthColor = Colors.transparent;
+  bool _isPasswordAcceptable = false; 
 
   @override
   void initState() {
@@ -24,8 +29,42 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void _validatePassword() {
+    String password = passwordController.text;
+
     setState(() {
-      _isPasswordValid = passwordController.text.length >= 6;
+      if (password.isEmpty) {
+        _passwordStrength = '';
+        _strengthColor = Colors.transparent;
+        _isPasswordAcceptable = false;
+      } else if (password.length < 6) {
+        _passwordStrength = 'Too Short';
+        _strengthColor = Colors.red;
+        _isPasswordAcceptable = false;
+      } else {
+        // Complexity check
+        bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
+        bool hasDigits = password.contains(RegExp(r'[0-9]'));
+        bool hasSpecialCharacters = password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+        bool hasLowercase = password.contains(RegExp(r'[a-z]'));
+
+        if (hasUppercase && hasLowercase && hasDigits && hasSpecialCharacters && password.length >= 10) {
+          _passwordStrength = 'Very Strong';
+          _strengthColor = const Color(0xFF008000); // Dark Green
+          _isPasswordAcceptable = true;
+        } else if (hasUppercase && hasLowercase && hasDigits && password.length >= 8) {
+          _passwordStrength = 'Strong';
+          _strengthColor = const Color(0xFF34C759); // Light Green
+          _isPasswordAcceptable = true;
+        } else if ((hasUppercase || hasDigits) && password.length >= 6) {
+          _passwordStrength = 'Medium';
+          _strengthColor = Colors.orange;
+          _isPasswordAcceptable = true; 
+        } else {
+          _passwordStrength = 'Weak';
+          _strengthColor = Colors.redAccent;
+          _isPasswordAcceptable = false;
+        }
+      }
     });
   }
 
@@ -34,36 +73,25 @@ class _SignupScreenState extends State<SignupScreen> {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
-    // 1. Check for empty fields
     if (username.isEmpty || email.isEmpty || password.isEmpty) {
       _showError("All fields are required!");
       return;
     }
 
-    // 2. Validate email format
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
       _showError("Please enter a valid email address.");
       return;
     }
 
-    // 3. Check password length
-    if (password.length < 6) {
-      _showError("Password must be at least 6 characters.");
-      return;
-    }
-
     setState(() => _isLoading = true);
     
-    // 4. Call Firebase via AuthService
     String? result = await _authService.signUp(email, password);
     
     if (mounted) setState(() => _isLoading = false);
 
     if (result == null) {
-      // Success: Navigate back
       Navigator.pop(context);
     } else {
-      // Error: Show the Firebase error message
       _showError(result);
     }
   }
@@ -103,7 +131,6 @@ class _SignupScreenState extends State<SignupScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                // Title
                 const Center(
                   child: Text(
                     'Sign Up',
@@ -173,21 +200,23 @@ class _SignupScreenState extends State<SignupScreen> {
                     const SizedBox(height: 10),
                     TextField(
                       controller: passwordController,
+                      obscureText: true,
                       decoration: InputDecoration(
                         hintText: 'Enter your password',
                         hintStyle: const TextStyle(
                           color: Color(0xFF8F959E),
                           fontSize: 15,
                         ),
-                        suffixIcon: _isPasswordValid
-                            ? const Padding(
-                                padding: EdgeInsets.only(right: 8),
+                        // Dynamic Suffix Icon based on Strength Logic
+                        suffixIcon: _passwordStrength.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(right: 8, top: 15),
                                 child: Text(
-                                  'Strong',
+                                  _passwordStrength,
                                   style: TextStyle(
-                                    color: Color(0xFF34C759),
+                                    color: _strengthColor,
                                     fontSize: 11,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               )
@@ -204,7 +233,6 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         contentPadding: const EdgeInsets.symmetric(vertical: 12),
                       ),
-                      obscureText: true,
                     ),
                   ],
                 ),
@@ -274,12 +302,12 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
                 const SizedBox(height: 80),
                 
-                // Sign Up Button
+                // Sign Up Button - Disabled if password is not acceptable
                 SizedBox(
                   width: double.infinity,
                   height: 55,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _handleSignUp,
+                    onPressed: (_isLoading || !_isPasswordAcceptable) ? null : _handleSignUp,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF9775FA),
                       shape: RoundedRectangleBorder(

@@ -18,6 +18,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   int _currentImageIndex = 0;
   String _selectedSize = 'M';
   bool _showFullDescription = false;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,12 +57,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Product Image Gallery
+            // Product Image Gallery - FIXED
             SizedBox(
               height: 400,
               child: Stack(
                 children: [
                   PageView.builder(
+                    controller: _pageController,
                     itemCount: images.length,
                     onPageChanged: (index) {
                       setState(() => _currentImageIndex = index);
@@ -96,7 +110,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            // Thumbnail Images
+            // Thumbnail Images - FIXED: Now clickable and changes main image
             if (images.length > 1)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -107,7 +121,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     itemCount: images.length > 4 ? 4 : images.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        onTap: () => setState(() => _currentImageIndex = index),
+                        onTap: () {
+                          setState(() => _currentImageIndex = index);
+                          _pageController.animateToPage(
+                            index,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        },
                         child: Container(
                           margin: const EdgeInsets.only(right: 10),
                           width: 70,
@@ -144,9 +165,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Category
+                  // Category - From API
                   Text(
-                    widget.product['category']?['name'] ?? 'Men\'s Printed Pullover Hoodie',
+                    widget.product['category']?['name'] ?? 'Product Category',
                     style: const TextStyle(
                       fontSize: 13,
                       color: Color(0xFF8F959E),
@@ -154,13 +175,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  // Title and Price
+                  // Title and Price - From API
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: Text(
-                          widget.product['title'] ?? 'Nike Club Fleece',
+                          widget.product['title'] ?? 'Product Name',
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w600,
@@ -168,9 +189,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ),
                         ),
                       ),
-                      Text(
+                      const Text(
                         'Price',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
                           color: Color(0xFF8F959E),
                         ),
@@ -232,7 +253,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  // Description
+                  // Description - From API
                   const Text(
                     'Description',
                     style: TextStyle(
@@ -243,8 +264,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    widget.product['description'] ?? 
-                    'The Nike Throwback Pullover Hoodie is made from premium French terry fabric that blends a performance feel with...',
+                    widget.product['description'] ?? 'No description available',
                     style: const TextStyle(
                       fontSize: 15,
                       color: Color(0xFF8F959E),
@@ -253,57 +273,30 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     maxLines: _showFullDescription ? null : 3,
                     overflow: _showFullDescription ? null : TextOverflow.ellipsis,
                   ),
-                  TextButton(
-                    onPressed: () => setState(() => _showFullDescription = !_showFullDescription),
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(0, 0),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(
-                      _showFullDescription ? 'Read Less' : 'Read More..',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
+                  if ((widget.product['description']?.toString().length ?? 0) > 100)
+                    TextButton(
+                      onPressed: () => setState(() => _showFullDescription = !_showFullDescription),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, 0),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  // Reviews Section
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Reviews',
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
+                      child: Text(
+                        _showFullDescription ? 'Read Less' : 'Read More..',
+                        style: const TextStyle(
+                          fontSize: 13,
                           color: Colors.black,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          // Navigate to reviews screen
-                        },
-                        child: const Text(
-                          'View All',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Color(0xFF8F959E),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  // Sample Review
-                  _buildReviewCard(
-                    name: 'Ronald Richards',
-                    date: '13 Sep, 2020',
-                    rating: 4.8,
-                    comment: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque malesuada eget vitae amet...',
-                  ),
+                    ),
+                  const SizedBox(height: 20),
+                  
+                  // NOTE: Reviews section removed because API doesn't provide reviews
+                  // The Platzi Fake Store API only provides:
+                  // - id, title, price, description, images, category
+                  // It does NOT provide: reviews, ratings, sizes
+                  
                   const SizedBox(height: 100),
                 ],
               ),
@@ -413,114 +406,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildReviewCard({
-    required String name,
-    required String date,
-    required double rating,
-    required String comment,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE7EAEF)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: const Color(0xFFF5F6FA),
-                child: Text(
-                  name[0],
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF9775FA),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        const Icon(Icons.access_time, size: 12, color: Color(0xFF8F959E)),
-                        const SizedBox(width: 4),
-                        Text(
-                          date,
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Color(0xFF8F959E),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    rating.toString(),
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const Text(
-                    'rating',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Color(0xFF8F959E),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(width: 4),
-              Row(
-                children: List.generate(5, (index) {
-                  return Icon(
-                    index < rating.floor() ? Icons.star : Icons.star_border,
-                    size: 12,
-                    color: const Color(0xFFFFC833),
-                  );
-                }),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            comment,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Color(0xFF8F959E),
-              height: 1.5,
-            ),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
       ),
     );
   }
