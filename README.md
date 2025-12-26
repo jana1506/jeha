@@ -655,7 +655,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Authentication
 | Login | Signup |
 |-------|--------|
-| ![Login](screenshots/login.png) | ![Signup](screenshots/signup.png) |
+| <img width="187" height="421" alt="image" src="https://github.com/user-attachments/assets/94e7312d-f635-4e6e-b64e-46bb918a7c5f" />
+ | ![Signup](screenshots/signup.png) |
 
 ### Home & Products
 | Home | Product Detail |
