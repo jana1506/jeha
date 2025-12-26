@@ -655,15 +655,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Authentication
 | Login | Signup |
 |-------|--------|
-| <img width="187" height="421" alt="image" src="https://github.com/user-attachments/assets/94e7312d-f635-4e6e-b64e-46bb918a7c5f" />|
-|<img width="190" height="421" alt="image" src="https://github.com/user-attachments/assets/96221e1e-8f02-4f10-871b-d20bf0234e5c" />|
+| <img width="187" height="421" alt="image" src="https://github.com/user-attachments/assets/94e7312d-f635-4e6e-b64e-46bb918a7c5f" /> |
+| <img width="190" height="421" alt="image" src="https://github.com/user-attachments/assets/96221e1e-8f02-4f10-871b-d20bf0234e5c" /> |
  
 
 ### Home & Products
 | Home | Product Detail |
 |------|----------------|
 | <img width="191" height="422" alt="image" src="https://github.com/user-attachments/assets/7b3e4a5c-ba97-4f7b-b318-7b8655fa97bd" />|
-|<img width="204" height="458" alt="image" src="https://github.com/user-attachments/assets/eaea3017-c40d-4c11-8035-3f6a2705062e" />|
+|<img width="204" height="458" alt="image" src="https://github.com/user-attachments/assets/eaea3017-c40d-4c11-8035-3f6a2705062e" /> |
  
 
 ### Cart & Checkout
