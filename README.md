@@ -656,22 +656,30 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 | Login | Signup |
 |-------|--------|
 | <img width="187" height="421" alt="image" src="https://github.com/user-attachments/assets/94e7312d-f635-4e6e-b64e-46bb918a7c5f" />
- | ![Signup](screenshots/signup.png) |
+ |<img width="190" height="421" alt="image" src="https://github.com/user-attachments/assets/96221e1e-8f02-4f10-871b-d20bf0234e5c" />
+ |
 
 ### Home & Products
 | Home | Product Detail |
 |------|----------------|
-| ![Home](screenshots/home.png) | ![Detail](screenshots/product_detail.png) |
+| <img width="191" height="422" alt="image" src="https://github.com/user-attachments/assets/7b3e4a5c-ba97-4f7b-b318-7b8655fa97bd" />
+ |<img width="204" height="458" alt="image" src="https://github.com/user-attachments/assets/eaea3017-c40d-4c11-8035-3f6a2705062e" />
+ |
 
 ### Cart & Checkout
-| Cart | Address | Payment |
+| Cart |  Payment | Address |
 |------|---------|---------|
-| ![Cart](screenshots/cart.png) | ![Address](screenshots/address.png) | ![Payment](screenshots/payment.png) |
+|<img width="195" height="424" alt="image" src="https://github.com/user-attachments/assets/32836a99-e6be-4f2f-ace4-b934f87e06cd" />
+ |<img width="206" height="458" alt="image" src="https://github.com/user-attachments/assets/615b940a-c362-4abe-af84-e2191f94449f" />
+ |<img width="211" height="461" alt="image" src="https://github.com/user-attachments/assets/fd9948ad-62ba-4d67-a791-0fe484d2e027" />
+ |
 
 ### Orders & Profile
 | Orders | Confirmation |
 |--------|--------------|
-| ![Orders](screenshots/orders.png) | ![Confirmation](screenshots/confirmation.png) |
+| <img width="208" height="470" alt="image" src="https://github.com/user-attachments/assets/7c95af42-9db1-451f-adea-d0e074e96bff" />
+|<img width="204" height="462" alt="image" src="https://github.com/user-attachments/assets/ce5193d0-8d89-42ec-8488-ef2e136e356e" />
+ |
 
 ---
 
